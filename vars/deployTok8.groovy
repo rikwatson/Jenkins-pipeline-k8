@@ -40,8 +40,8 @@ def call(body) {
                 sh("cat deployments/${pipelineParams.envStage}/deployment.yaml")
             
                 withCredentials([file(credentialsId: "${pipelineParams.kubeConfigCredId}", variable: 'KUBEFILE')]) {
-                    sh "kubectl --kubeconfig='$KUBEFILE' apply -f ${newConfigMapFile} --alsologtostderr=true"
-                    sh "kubectl --kubeconfig='$KUBEFILE' apply -f deployments/${pipelineParams.envStage}/deployment.yaml --alsologtostderr=true"
+                    sh "${pipelineParams.kubectlPath} --kubeconfig='$KUBEFILE' apply -f ${newConfigMapFile} --alsologtostderr=true"
+                    sh "${pipelineParams.kubectlPath} --kubeconfig='$KUBEFILE' apply -f deployments/${pipelineParams.envStage}/deployment.yaml --alsologtostderr=true"
                 }
             }
         } catch (err) {
