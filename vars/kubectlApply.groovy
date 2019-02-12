@@ -7,16 +7,15 @@ def call(body) {
 
 
     node ('k8-deploy') {
-    	try {
-	        stage ('Run kubectl apply command') {
+        try {
+            stage ('Run kubectl apply command') {
 
-	        withCredentials([file(credentialsId: "${pipelineParams.kubeConfigCredId}", variable: 'KUBEFILE')]) {
-                sh "kubectl --kubeconfig='$KUBEFILE' apply -f ${pipelineParams.deploymentFile} --alsologtostderr=true"
+                withCredentials([file(credentialsId: "${pipelineParams.kubeConfigCredId}", variable: 'KUBEFILE')]) {
+                    sh "kubectl --kubeconfig='$KUBEFILE' apply -f ${pipelineParams.deploymentFile} --alsologtostderr=true"
+                }
             }
-	        	
-	      	}
-	    } catch (err) {
-	        currentBuild.result = 'FAILED'
-	        throw err
+        } catch (err) {
+            currentBuild.result = 'FAILED'
+            throw err
     }
 }
