@@ -75,12 +75,12 @@ def call(body) {
                     sh "cat deploymentStatus"
 
                     def uptodatePodStatus = sh (
-                        script: "cat deploymentStatus | grep ${pipelineParams.appName}-deployment-${pipelineParams.gitHash} | awk '{print \$3}'",
+                        script: "cat deploymentStatus | grep ${pipelineParams.appName}-deployment-${pipelineParams.gitHash} | awk '{print $3}'",
                         returnStdout: true
                     ).trim()
                     
                     def availablePodStatus = sh (
-                        script: "cat deploymentStatus | grep ${pipelineParams.appName}-deployment-${pipelineParams.gitHash} | awk '{print \$4}'",
+                        script: "cat deploymentStatus | grep ${pipelineParams.appName}-deployment-${pipelineParams.gitHash} | awk '{print $4}'",
                         returnStdout: true
                     ).trim()
 
