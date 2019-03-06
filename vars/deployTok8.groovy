@@ -84,7 +84,7 @@ def call(body) {
                         returnStdout: true
                     ).trim()
 
-                    if (availablePodStatus != 0 && currentPodStatus == uptodatePodStatus) {
+                    if (availablePodStatus != 0 && availablePodStatus == uptodatePodStatus) {
                         sh "echo All Pods successfully deployed!"
                     }
                     else {
