@@ -47,20 +47,20 @@ def call(body) {
 
             //Wait for a while for pods to spin up
             stage('Wait for deployment to finish') {
-                sh "echo varifying deployment on '${pipelineParams.env_stage}' cluster, image ${pipelineParams.image_name}:${pipelineParams.image_tag}"
-                echo "Delaying for ${pipelineParams.wait_before_validate} secs..."
-                if (pipelineParams.wait_before_validate.isInteger()) {
-                    int wait_before_validate = pipelineParams.wait_before_validate as Integer
+                sh "echo varifying deployment on '${pipelineParams.envStage}' cluster, image ${pipelineParams.imageName}:${pipelineParams.imageTag}"
+                echo "Delaying for ${pipelineParams.waitBeforeValidation} secs..."
+                if (pipelineParams.waitBeforeValidation.isInteger()) {
+                    int wait_before_validate = pipelineParams.waitBeforeValidation as Integer
                     sleep(wait_before_validate)
                 }
             }
 
             stage ('Verify deployment ') {
-                expectedStatus = "deployment \"${pipelineParams.app_name}-deployment-${pipelineParams.git_hash}\" successfully rolled out"
+                expectedStatus = "deployment \"${pipelineParams.appName}-deployment-${pipelineParams.gitHash}\" successfully rolled out"
                 withCredentials([file(credentialsId: "${pipelineParams.kubeConfigCredId}", variable: 'KUBEFILE')]) {
-                    sh "${pipelineParams.kubectlPath} --kubeconfig='$KUBEFILE' get deployment ${pipelineParams.app_name}-deployment-${pipelineParams.git_hash}"
+                    sh "${pipelineParams.kubectlPath} --kubeconfig='$KUBEFILE' get deployment ${pipelineParams.appName}-deployment-${pipelineParams.gitHash}"
                     def rolloutStatus = sh (
-                            script: "${pipelineParams.kubectlPath} --kubeconfig='$KUBEFILE' rollout status deployment ${pipelineParams.app_name}-deployment-${pipelineParams.git_hash}",
+                            script: "${pipelineParams.kubectlPath} --kubeconfig='$KUBEFILE' rollout status deployment ${pipelineParams.appName}-deployment-${pipelineParams.gitHash}",
                             returnStdout: true
                         ).trim()
                         if (expectedStatus == rolloutStatus) {
@@ -71,22 +71,22 @@ def call(body) {
                             currentBuild.result = 'FAILURE'
                             return
                         }
-                    sh "${pipelineParams.kubectlPath} --kubeconfig='$KUBEFILE' get deployment ${pipelineParams.app_name}-deployment-${pipelineParams.git_hash} > deploymentStatus"
+                    sh "${pipelineParams.kubectlPath} --kubeconfig='$KUBEFILE' get deployment ${pipelineParams.appName}-deployment-${pipelineParams.gitHash} > deploymentStatus"
 
                     def desiredPodStatus = sh (
-                        script: "grep ${pipelineParams.app_name}-deployment-${pipelineParams.git_hash} deploymentStatus | awk '{print \$2}'",
+                        script: "grep ${pipelineParams.appName}-deployment-${pipelineParams.gitHash} deploymentStatus | awk '{print \$2}'",
                         returnStdout: true
                     ).trim()
                     def currentPodStatus = sh (
-                        script: "grep ${pipelineParams.app_name}-deployment-${pipelineParams.git_hash} deploymentStatus | awk '{print \$3}'",
+                        script: "grep ${pipelineParams.appName}-deployment-${pipelineParams.gitHash} deploymentStatus | awk '{print \$3}'",
                         returnStdout: true
                     ).trim()
                     def uptodatePodStatus = sh (
-                        script: "grep ${pipelineParams.app_name}-deployment-${pipelineParams.git_hash} deploymentStatus | awk '{print \$4}'",
+                        script: "grep ${pipelineParams.appName}-deployment-${pipelineParams.gitHash} deploymentStatus | awk '{print \$4}'",
                         returnStdout: true
                     ).trim()
                     def availablePodStatus = sh (
-                        script: "grep ${pipelineParams.app_name}-deployment-${pipelineParams.git_hash} deploymentStatus | awk '{print \$5}'",
+                        script: "grep ${pipelineParams.appName}-deployment-${pipelineParams.gitHash} deploymentStatus | awk '{print \$5}'",
                         returnStdout: true
                     ).trim()
 
