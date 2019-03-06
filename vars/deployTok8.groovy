@@ -72,21 +72,22 @@ def call(body) {
                             return
                         }
                     sh "${pipelineParams.kubectlPath} --kubeconfig='$KUBEFILE' get deployment ${pipelineParams.appName}-deployment-${pipelineParams.gitHash} > deploymentStatus"
+                    sh "cat deploymentStatus"
 
                     def desiredPodStatus = sh (
-                        script: "grep ${pipelineParams.appName}-deployment-${pipelineParams.gitHash} deploymentStatus | awk '{print \$2}'",
+                        script: "cat deploymentStatus | grep ${pipelineParams.appName}-deployment-${pipelineParams.gitHash} | awk '{print \$2}'",
                         returnStdout: true
                     ).trim()
                     def currentPodStatus = sh (
-                        script: "grep ${pipelineParams.appName}-deployment-${pipelineParams.gitHash} deploymentStatus | awk '{print \$3}'",
+                        script: "cat deploymentStatus | grep ${pipelineParams.appName}-deployment-${pipelineParams.gitHash} | awk '{print \$3}'",
                         returnStdout: true
                     ).trim()
                     def uptodatePodStatus = sh (
-                        script: "grep ${pipelineParams.appName}-deployment-${pipelineParams.gitHash} deploymentStatus | awk '{print \$4}'",
+                        script: "cat deploymentStatus | grep ${pipelineParams.appName}-deployment-${pipelineParams.gitHash} | awk '{print \$4}'",
                         returnStdout: true
                     ).trim()
                     def availablePodStatus = sh (
-                        script: "grep ${pipelineParams.appName}-deployment-${pipelineParams.gitHash} deploymentStatus | awk '{print \$5}'",
+                        script: "cat deploymentStatus | grep ${pipelineParams.appName}-deployment-${pipelineParams.gitHash} | awk '{print \$5}'",
                         returnStdout: true
                     ).trim()
 
