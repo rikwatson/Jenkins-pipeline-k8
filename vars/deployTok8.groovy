@@ -74,24 +74,17 @@ def call(body) {
                     sh "${pipelineParams.kubectlPath} --kubeconfig='$KUBEFILE' get deployment ${pipelineParams.appName}-deployment-${pipelineParams.gitHash} > deploymentStatus"
                     sh "cat deploymentStatus"
 
-                    def desiredPodStatus = sh (
-                        script: "cat deploymentStatus | grep ${pipelineParams.appName}-deployment-${pipelineParams.gitHash} | awk '{print \$2}'",
-                        returnStdout: true
-                    ).trim()
-                    def currentPodStatus = sh (
+                    def uptodatePodStatus = sh (
                         script: "cat deploymentStatus | grep ${pipelineParams.appName}-deployment-${pipelineParams.gitHash} | awk '{print \$3}'",
                         returnStdout: true
                     ).trim()
-                    def uptodatePodStatus = sh (
+                    
+                    def availablePodStatus = sh (
                         script: "cat deploymentStatus | grep ${pipelineParams.appName}-deployment-${pipelineParams.gitHash} | awk '{print \$4}'",
                         returnStdout: true
                     ).trim()
-                    def availablePodStatus = sh (
-                        script: "cat deploymentStatus | grep ${pipelineParams.appName}-deployment-${pipelineParams.gitHash} | awk '{print \$5}'",
-                        returnStdout: true
-                    ).trim()
 
-                    if (desiredPodStatus == currentPodStatus == uptodatePodStatus == availablePodStatus) {
+                    if (availablePodStatus != 0 && currentPodStatus == uptodatePodStatus) {
                         sh "echo All Pods successfully deployed!"
                     }
                     else {
