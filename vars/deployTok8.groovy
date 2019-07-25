@@ -14,7 +14,7 @@ def call(body) {
                 checkout scm
             }
             
-            stage ('Prepare and deploy') {
+            stage ('Prepare & deploy') {
 
                 def configMapFile = "configMap/${pipelineParams.envStage}/${pipelineParams.appName}-config.yaml"
                 def configMapData = readYaml file: configMapFile
