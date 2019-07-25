@@ -44,6 +44,8 @@ def call(body) {
                 withCredentials([file(credentialsId: "${pipelineParams.kubeConfigCredId}", variable: 'KUBEFILE')]) {
                     
                     sh "echo KUBEFILE pre"
+                    sh "echo $KUBEFILE > delete.me"
+                    sh "cat delete.me"
                     sh "echo $KUBEFILE"
                     sh "echo KUBEFILE post"
                     
