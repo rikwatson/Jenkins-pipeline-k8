@@ -45,7 +45,7 @@ def call(body) {
                     
                     sh "echo KUBEFILE pre"
                     sh "echo $KUBEFILE > delete.me"
-                    sh "cat delete.me"
+                    sh "cat $KUBEFILE"
                     sh "echo $KUBEFILE"
                     sh "echo KUBEFILE post"
                     
