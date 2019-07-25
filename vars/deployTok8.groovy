@@ -43,12 +43,6 @@ def call(body) {
             
                 withCredentials([file(credentialsId: "${pipelineParams.kubeConfigCredId}", variable: 'KUBEFILE')]) {
                     
-                    sh "echo KUBEFILE pre"
-                    sh "echo $KUBEFILE > delete.me"
-                    sh "cat $KUBEFILE"
-                    sh "echo $KUBEFILE"
-                    sh "echo KUBEFILE post"
-                    
                     sh "kubectl --kubeconfig='$KUBEFILE' apply -f ${newConfigMapFile} --alsologtostderr=true"
                     sh "kubectl --kubeconfig='$KUBEFILE' apply -f deployments/${pipelineParams.envStage}/deployment.yaml --alsologtostderr=true"
                     // sh "${pipelineParams.kubectlPath} --kubeconfig='$KUBEFILE' apply -f ${newConfigMapFile} --alsologtostderr=true"
