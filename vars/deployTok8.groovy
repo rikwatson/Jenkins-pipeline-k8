@@ -26,6 +26,7 @@ def call(body) {
 
                 writeYaml file: newConfigMapFile, data: configMapData
 
+                sh("echo newConfigMapFile is ${newConfigMapFile} and contains:")
                 sh("cat ${newConfigMapFile}")
             
                 sh("cp deployments/${pipelineParams.envStage}/deployment.tmpl.yaml deployments/${pipelineParams.envStage}/deployment.yaml " )
@@ -37,13 +38,19 @@ def call(body) {
                 sh("sed -i.bak 's#NAMESPACE#${pipelineParams.namespace}#' deployments/${pipelineParams.envStage}/deployment.yaml")
                 sh("sed -i.bak 's#APP_RUN_ENV#${pipelineParams.envStage}#' deployments/${pipelineParams.envStage}/deployment.yaml")
                 sh("sed -i.bak 's#CONFIGNAMEHASH#${newConfigMapName}#' deployments/${pipelineParams.envStage}/deployment.yaml")
+                
+                sh("echo deployments/${pipelineParams.envStage}/deployment.yaml contains")
+                
                 sh("cat deployments/${pipelineParams.envStage}/deployment.yaml")
                 
                 sh("which kubectl")
             
                 withCredentials([file(credentialsId: "${pipelineParams.kubeConfigCredId}", variable: 'KUBEFILE')]) {
                     
+                    sh "echo Applying newConfigMapFile"
+                    
                     sh "kubectl --kubeconfig='$KUBEFILE' apply -f ${newConfigMapFile} --alsologtostderr=true"
+                    sh "echo Applying deployment.yaml"
                     sh "kubectl --kubeconfig='$KUBEFILE' apply -f deployments/${pipelineParams.envStage}/deployment.yaml --alsologtostderr=true"
                     // sh "${pipelineParams.kubectlPath} --kubeconfig='$KUBEFILE' apply -f ${newConfigMapFile} --alsologtostderr=true"
                     // sh "${pipelineParams.kubectlPath} --kubeconfig='$KUBEFILE' apply -f deployments/${pipelineParams.envStage}/deployment.yaml --alsologtostderr=true"
