@@ -44,6 +44,8 @@ def call(body) {
                 sh("cat deployments/${pipelineParams.envStage}/deployment.yaml")
                 
                 sh("which kubectl")
+                
+                sh("echo CredentialsId is ${pipelineParams.kubeConfigCredId}")
             
                 withCredentials([file(credentialsId: "${pipelineParams.kubeConfigCredId}", variable: 'KUBEFILE')]) {
                     
